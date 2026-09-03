@@ -34,6 +34,10 @@ const devCredentialsProvider = Credentials({
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  // Cloud Run等、リクエストのHostヘッダーが実行時まで確定しない環境で
+  // "UntrustedHost"エラーになるのを避けるため信頼する。
+  // NEXTAUTH_URL/AUTH_URLを正しく設定した上での利用を前提とする。
+  trustHost: true,
   providers: isGoogleConfigured ? [Google] : [Google, devCredentialsProvider],
   pages: {
     signIn: "/login",
